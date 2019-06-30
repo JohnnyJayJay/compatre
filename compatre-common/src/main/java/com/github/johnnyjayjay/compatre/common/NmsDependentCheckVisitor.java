@@ -10,7 +10,7 @@ import jdk.internal.org.objectweb.asm.Opcodes;
  */
 public final class NmsDependentCheckVisitor extends ClassVisitor {
 
-  private static final String ANNOTATION_NAME = NmsDependent.class.getName().replace('.', '/');
+  private static final String ANNOTATION_DESCRIPTOR = NmsDependent.class.getName().replace('.', '/');
 
   private boolean annotationPresent;
 
@@ -21,7 +21,7 @@ public final class NmsDependentCheckVisitor extends ClassVisitor {
 
   @Override
   public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-    if (ANNOTATION_NAME.equals(descriptor)) {
+    if (ANNOTATION_DESCRIPTOR.equals(descriptor)) {
       annotationPresent = true;
     }
     return null;
