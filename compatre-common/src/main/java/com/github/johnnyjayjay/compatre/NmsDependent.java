@@ -1,4 +1,4 @@
-package com.github.johnnyjayjay.compatre.common;
+package com.github.johnnyjayjay.compatre;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

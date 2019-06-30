@@ -1,5 +1,6 @@
 package com.github.johnnyjayjay.compatre.common;
 
+import com.github.johnnyjayjay.compatre.NmsDependent;
 import jdk.internal.org.objectweb.asm.AnnotationVisitor;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.Opcodes;
