@@ -1,3 +1,4 @@
 rootProject.name = 'compatre'
 include ':compatre-agent', ':compatre-common'
+include 'compatre-loader'
 
