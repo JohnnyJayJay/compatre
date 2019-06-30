@@ -79,6 +79,7 @@ public class VersionIndependentCommand implements CommandExecutor {
       CraftPlayer player = (CraftPlayer) sender;
       // do something with it
     } 
+    return true;
   }
 }
 ```
