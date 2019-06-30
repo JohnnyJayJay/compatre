@@ -1,5 +1,5 @@
 # Compatre
-Compatre is a very small and fast library to assist with version-dependent Bukkit programming. 
+Compatre is a very small and fast tool to assist with version-dependent Bukkit programming. 
 It makes "version-checkers" and multiple implementations for different versions (but the same functionality)
 redundant by replacing the required nms/craftbukkit types at runtime.
 
