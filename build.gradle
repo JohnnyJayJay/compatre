@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group 'johnnyjayjay'
@@ -16,6 +17,14 @@ repositories {
 
 dependencies {
     compileOnly "org.bukkit:bukkit:1.13.2-R0.1-SNAPSHOT"
+}
+
+jar {
+    manifest {
+        attributes (
+                "Premain-Class": "com.github.johnnyjayjay.compatre.NmsAgent"
+        )
+    }
 }
 
 
