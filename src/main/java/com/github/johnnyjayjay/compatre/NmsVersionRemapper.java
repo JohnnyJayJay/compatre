@@ -1,6 +1,6 @@
 package com.github.johnnyjayjay.compatre;
 
-import jdk.internal.org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.commons.Remapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -6,16 +6,19 @@ plugins {
 group 'johnnyjayjay'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     maven {
         url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
+    mavenCentral()
     mavenLocal()
 }
 
 dependencies {
+    implementation "org.ow2.asm:asm:7.1"
+    implementation "org.ow2.asm:asm-commons:7.1"
     compileOnly "org.bukkit:bukkit:1.13.2-R0.1-SNAPSHOT"
 }
 

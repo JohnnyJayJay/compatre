@@ -1,6 +1,8 @@
 package com.github.johnnyjayjay.compatre;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.security.ProtectionDomain;
 
 
 /**
@@ -9,8 +11,16 @@ import java.lang.instrument.Instrumentation;
 public final class NmsAgent {
 
   public static void premain(String agentArgs, Instrumentation inst) {
-    inst.addTransformer((loader, className, classBeingRedefined, protectionDomain, classfileBuffer)
-        -> NmsDependentTransformer.transformIfNmsDependent(classfileBuffer));
+    inst.addTransformer(new NmsTransformer());
+  }
+
+  private static final class NmsTransformer implements ClassFileTransformer {
+    @Override
+    public byte[] transform(ClassLoader loader, String className,
+                            Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
+                            byte[] classfileBuffer) {
+      return NmsDependentTransformer.transformIfNmsDependent(classfileBuffer);
+    }
   }
 
 }

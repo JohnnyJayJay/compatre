@@ -1,9 +1,9 @@
 package com.github.johnnyjayjay.compatre;
 
-import jdk.internal.org.objectweb.asm.ClassReader;
-import jdk.internal.org.objectweb.asm.ClassVisitor;
-import jdk.internal.org.objectweb.asm.ClassWriter;
-import jdk.internal.org.objectweb.asm.commons.RemappingClassAdapter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.ClassRemapper;
 
 import org.bukkit.Bukkit;
 
@@ -22,8 +22,8 @@ final class NmsDependentTransformer {
     reader.accept(checkVisitor, 0);
     if (checkVisitor.isAnnotationPresent()) {
       ClassWriter writer = new ClassWriter(reader, 0);
-      ClassVisitor remappingAdapter = new RemappingClassAdapter(writer, new NmsVersionRemapper(getNmsVersion()));
-      reader.accept(remappingAdapter, 0);
+      ClassVisitor classRemapper = new ClassRemapper(writer, new NmsVersionRemapper(getNmsVersion()));
+      reader.accept(classRemapper, 0);
       return writer.toByteArray();
     } else {
       return classfileBuffer;
