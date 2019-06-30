@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes;
  */
 final class NmsDependentCheckVisitor extends ClassVisitor {
 
-  private static final String ANNOTATION_DESCRIPTOR = NmsDependent.class.getName().replace('.', '/');
+  private static final String ANNOTATION_DESCRIPTOR = "L" + NmsDependent.class.getName().replace('.', '/') + ";";
 
   private boolean annotationPresent;
 

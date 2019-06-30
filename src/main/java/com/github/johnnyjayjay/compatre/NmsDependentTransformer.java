@@ -1,11 +1,11 @@
 package com.github.johnnyjayjay.compatre;
 
+import org.bukkit.Bukkit;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.ClassRemapper;
-
-import org.bukkit.Bukkit;
 
 /**
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
@@ -21,7 +21,7 @@ final class NmsDependentTransformer {
     NmsDependentCheckVisitor checkVisitor = new NmsDependentCheckVisitor();
     reader.accept(checkVisitor, 0);
     if (checkVisitor.isAnnotationPresent()) {
-      ClassWriter writer = new ClassWriter(reader, 0);
+      ClassWriter writer = new ClassWriter(0);
       ClassVisitor classRemapper = new ClassRemapper(writer, new NmsVersionRemapper(getNmsVersion()));
       reader.accept(classRemapper, 0);
       return writer.toByteArray();

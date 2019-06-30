@@ -20,8 +20,8 @@ final class NmsVersionRemapper extends Remapper {
   }
 
   @Override
-  public String mapDesc(String descriptor) {
-    return super.mapDesc(adjust(descriptor));
+  public String map(String internalName) {
+    return adjust(internalName);
   }
 
   private String adjust(String descriptor) {
