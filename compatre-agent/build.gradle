@@ -8,5 +8,5 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 dependencies {
-    compile project(':compatre-common')
+    compile project(":compatre-common")
 }
