@@ -1,4 +1,4 @@
-package com.github.johnnyjayjay.compatre.common;
+package com.github.johnnyjayjay.compatre;
 
 import com.github.johnnyjayjay.compatre.NmsDependent;
 import jdk.internal.org.objectweb.asm.AnnotationVisitor;
@@ -8,7 +8,7 @@ import jdk.internal.org.objectweb.asm.Opcodes;
 /**
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
-public final class NmsDependentCheckVisitor extends ClassVisitor {
+final class NmsDependentCheckVisitor extends ClassVisitor {
 
   private static final String ANNOTATION_DESCRIPTOR = NmsDependent.class.getName().replace('.', '/');
 

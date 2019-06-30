@@ -1,4 +1,4 @@
-package com.github.johnnyjayjay.compatre.common;
+package com.github.johnnyjayjay.compatre;
 
 import jdk.internal.org.objectweb.asm.commons.Remapper;
 
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
-public final class NmsVersionRemapper extends Remapper {
+final class NmsVersionRemapper extends Remapper {
 
   private static final Pattern VERSION_PACKAGE_PATTERN =
       Pattern.compile("(?<=(net/minecraft/server|org/bukkit/craftbukkit)/)(v\\d_\\d{1,2}_R\\d)");

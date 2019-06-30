@@ -1,4 +1,4 @@
-package com.github.johnnyjayjay.compatre.common;
+package com.github.johnnyjayjay.compatre;
 
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 /**
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
-public final class NmsDependentTransformer {
+final class NmsDependentTransformer {
 
   private static String nmsVersion = null;
 
