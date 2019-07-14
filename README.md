@@ -84,3 +84,23 @@ public class VersionIndependentCommand implements CommandExecutor {
 }
 ```
 
+### ClassLoader
+Just like with the agent, you simply need to annotate version dependent classes as `@NmsDependent`. 
+You just need to do one more thing though: manually load these classes.
+That's much simpler than it sounds; just modify your plugin class like this:
+```java
+import org.bukkit.plugin.JavaPlugin;
+import com.github.johnnyjayjay.compatre.NmsClassLoader;
+
+public class MyPlugin extends JavaPlugin {
+  // this will only run once when MyPlugin is loaded
+  static {
+    NmsClassLoader.loadAllInClasspath(); // loads all nms dependents in class path
+  }
+  
+  // etc.
+}
+```
+Note that there is no way to modify the class this method is invoked in. So `MyPlugin` here could 
+not depend on version specific classes.
+
