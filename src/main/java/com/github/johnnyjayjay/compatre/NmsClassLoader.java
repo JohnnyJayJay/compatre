@@ -1,5 +1,8 @@
 package com.github.johnnyjayjay.compatre;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +16,8 @@ import java.net.URLClassLoader;
  */
 public final class NmsClassLoader extends URLClassLoader {
 
-  public NmsClassLoader() throws MalformedURLException {
-    super(ClassLoader.getSystemClassLoader() instanceof URLClassLoader
-        ? ((URLClassLoader) ClassLoader.getSystemClassLoader()).getURLs()
-        : new URL[] { new File(".").toURI().toURL()},
-        ClassLoader.getSystemClassLoader());
+  public NmsClassLoader(URL[] urls, ClassLoader parent) {
+    super(urls, parent);
   }
 
   @Override
@@ -51,5 +51,29 @@ public final class NmsClassLoader extends URLClassLoader {
       }
       return byteStream.toByteArray();
     }
+  }
+
+  public static void loadAllInClasspath() {
+    ClassLoader nmsLoader = fromSystemClassLoader();
+    try (ScanResult result = new ClassGraph()
+        .enableAnnotationInfo()
+        .addClassLoader(nmsLoader)
+        .scan()) {
+      result.getClassesWithAnnotation(NmsDependent.class.getName()).loadClasses();
+    }
+  }
+
+  public static NmsClassLoader fromSystemClassLoader() {
+    ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+    URL[] urls;
+    try {
+      urls = systemClassLoader instanceof URLClassLoader
+          ? ((URLClassLoader) systemClassLoader).getURLs()
+          : new URL[] { new File(".").toURI().toURL() };
+
+    } catch (MalformedURLException e) {
+      throw new AssertionError("URL is unexpectedly malformed", e);
+    }
+    return new NmsClassLoader(urls, systemClassLoader);
   }
 }
