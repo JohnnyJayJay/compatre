@@ -12,6 +12,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
+ * An implementation of {@code ClassLoader} that transforms types loaded with this class
+ * and annotated with {@link NmsDependent} as described {@link NmsDependent here}.
+ *
+ * Note that this ClassLoader only works for class files that are present on the machine the JVM is running on.
+ *
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
 public final class NmsClassLoader extends URLClassLoader {
@@ -53,6 +58,10 @@ public final class NmsClassLoader extends URLClassLoader {
     }
   }
 
+  /**
+   * Scans the classpath and loads every class annotated with {@link NmsDependent}
+   * using an instance of this ClassLoader obtained using {@link #fromSystemClassLoader()}.
+   */
   public static void loadAllInClasspath() {
     ClassLoader nmsLoader = fromSystemClassLoader();
     try (ScanResult result = new ClassGraph()
@@ -63,6 +72,12 @@ public final class NmsClassLoader extends URLClassLoader {
     }
   }
 
+  /**
+   * Creates a new NmsClassLoader based on the system ClassLoader.
+   * If the system class loader is an {@code URLClassLoader}, its urls will be used for this ClassLoader too.
+   *
+   * @return a new NmsClassLoader instance with the system class loader as its parent.
+   */
   public static NmsClassLoader fromSystemClassLoader() {
     ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
     URL[] urls;

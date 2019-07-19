@@ -6,6 +6,10 @@ import java.security.ProtectionDomain;
 
 
 /**
+ * Compatre's java agent. When applied, its {@code premain} will attach a
+ * {@code ClassFileTransformer} to each class that will transform types annotated
+ * with {@link NmsDependent} as described {@link NmsDependent here}.
+ *
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
 public final class NmsAgent {

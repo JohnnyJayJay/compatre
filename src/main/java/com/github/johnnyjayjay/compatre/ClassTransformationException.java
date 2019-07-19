@@ -1,6 +1,8 @@
 package com.github.johnnyjayjay.compatre;
 
 /**
+ * An {@code Exception} thrown to indicate that a class file could not be transformed by Compatre.
+ *
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
 public class ClassTransformationException extends RuntimeException {
