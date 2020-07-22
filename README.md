@@ -5,7 +5,7 @@ redundant by replacing the required nms/craftbukkit types at runtime.
 
 **Features include:**
 - A java agent to dynamically replace types (no boilerplate)
-- A custom ClassLoader as an alternative to the agent (very little boilerplate) *coming soon...*
+- A custom ClassLoader as an alternative to the agent (very little boilerplate)
 - A library to support cases where more than just a type replacement is needed *coming soon...*
 
 ## Dependency
