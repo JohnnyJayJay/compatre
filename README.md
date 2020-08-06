@@ -5,7 +5,7 @@ redundant by replacing the required nms/craftbukkit types at runtime.
 
 **Features include:**
 - A java agent to dynamically replace types (no boilerplate)
-- A custom ClassLoader as an alternative to the agent (very little boilerplate) *coming soon...*
+- A custom ClassLoader as an alternative to the agent (very little boilerplate)
 - A library to support cases where more than just a type replacement is needed *coming soon...*
 
 ## Dependency
@@ -22,7 +22,7 @@ redundant by replacing the required nms/craftbukkit types at runtime.
     <dependency>
         <groupId>com.github.johnnyjayjay</groupId>
         <artifactId>compatre</artifactId>
-        <version>master-SNAPSHOT</version>
+        <version>0.2.0-alpha</version>
     </dependency>
 </dependencies>
 ```
@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.johnnyjayjay:compatre:master-SNAPSHOT")
+    implementation("com.github.johnnyjayjay:compatre:0.2.0-alpha")
 }
 ```
 
@@ -45,8 +45,8 @@ changes may occur at any time. Please leave requests, ideas and bug reports in t
 [issues section](https://github.com/johnnyjayjay/compatre/issues) of this repository.
 
 ## Agent Setup
-Setting up the agent is fairly easy. Head over to the [agent builds](./agent-build) and download 
-the latest jar file from there. Now place the file somewhere near your server jar, e.g. in the `lib` 
+Setting up the agent is fairly easy. Head over to the [releases](/releases) and download 
+the latest `all` jar file from there. Now place the file somewhere near your server jar, e.g. in the `lib` 
 directory of your Minecraft server directory.
 
 Now add the the agent to your JVM arguments when starting the server:
@@ -95,7 +95,7 @@ import com.github.johnnyjayjay.compatre.NmsClassLoader;
 public class MyPlugin extends JavaPlugin {
   // this will only run once when MyPlugin is loaded
   static {
-    NmsClassLoader.loadAllInClasspath(); // loads all nms dependents in class path
+    NmsClassLoader.loadNmsDependents(MyPlugin.class); // loads all nms dependents of this plugin
   }
   
   // etc.

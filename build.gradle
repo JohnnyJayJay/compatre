@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.johnnyjayjay'
-version '1.0-SNAPSHOT'
+version '0.2.0-alpha'
 
 sourceCompatibility = 1.8
 
@@ -12,23 +12,46 @@ repositories {
     maven {
         url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
-    implementation "org.ow2.asm:asm:7.1"
-    implementation "org.ow2.asm:asm-commons:7.1"
-    implementation "io.github.classgraph:classgraph:4.8.43"
-    compileOnly "org.bukkit:bukkit:1.13.2-R0.1-SNAPSHOT"
+    implementation "org.ow2.asm:asm:8.0.1"
+    implementation "org.ow2.asm:asm-commons:8.0.1"
+    compileOnly "org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT"
 }
 
 jar {
     manifest {
         attributes (
-                "Premain-Class": "com.github.johnnyjayjay.compatre.NmsAgent"
+                "Premain-Class": "com.github.johnnyjayjay.compatre.NmsAgent",
+                "Agent-Class": "com.github.johnnyjayjay.compatre.NmsAgent"
         )
     }
+}
+
+javadoc {
+    failOnError false
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+    archives shadowJar
 }
 
 

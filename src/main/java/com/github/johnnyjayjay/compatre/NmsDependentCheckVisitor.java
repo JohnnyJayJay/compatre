@@ -5,16 +5,19 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
+ * An ASM {@code ClassVisitor} used to check whether the {@link NmsDependent} annotation is present on a class.
+ *
+ * @see NmsDependentTransformer#isNmsDependent(byte[])
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
-final class NmsDependentCheckVisitor extends ClassVisitor {
+public final class NmsDependentCheckVisitor extends ClassVisitor {
 
   private static final String ANNOTATION_DESCRIPTOR = "L" + NmsDependent.class.getName().replace('.', '/') + ";";
 
   private boolean annotationPresent;
 
-  NmsDependentCheckVisitor() {
-    super(Opcodes.ASM5);
+  public NmsDependentCheckVisitor() {
+    super(Opcodes.ASM8);
     this.annotationPresent = false;
   }
 
@@ -26,7 +29,12 @@ final class NmsDependentCheckVisitor extends ClassVisitor {
     return null;
   }
 
-  boolean isAnnotationPresent() {
+  /**
+   * Returns whether the annotation is present. Must be called after visiting.
+   *
+   * @return {@code true}, if it is present.
+   */
+  public boolean isAnnotationPresent() {
     return annotationPresent;
   }
 }
