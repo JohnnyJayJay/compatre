@@ -47,7 +47,7 @@ changes may occur at any time. Please leave requests, ideas and bug reports in t
 [issues section](https://github.com/johnnyjayjay/compatre/issues) of this repository.
 
 ## Agent Setup
-Setting up the agent is fairly easy. Head over to the [releases](/releases) and download 
+Setting up the agent is fairly easy. Head over to the [releases](../../releases) and download 
 the latest `all` jar file from there. Now place the file somewhere near your server jar, e.g. in the `lib` 
 directory of your Minecraft server directory.
 
