@@ -4,6 +4,8 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
+import static com.github.johnnyjayjay.compatre.Compatre.LOGGER;
+
 /**
  * Compatre's java agent. When applied, its {@code premain} will attach a
  * {@code ClassFileTransformer} to each class that will transform types annotated
@@ -30,6 +32,7 @@ public final class NmsAgent {
   }
 
   public static void agentmain(String agentArgs, Instrumentation inst) {
+    LOGGER.info("Adding class file transformer");
     inst.addTransformer(new NmsTransformer());
   }
 
@@ -38,9 +41,11 @@ public final class NmsAgent {
     public byte[] transform(ClassLoader loader, String className,
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) {
-      return NmsDependentTransformer.isNmsDependent(classfileBuffer)
-          ? NmsDependentTransformer.transform(classfileBuffer)
-          : classfileBuffer;
+      if (NmsDependentTransformer.isNmsDependent(classfileBuffer)) {
+        LOGGER.fine("Found NMS dependent class " + className);
+        return NmsDependentTransformer.transform(classfileBuffer);
+      }
+      return classfileBuffer;
     }
   }
 

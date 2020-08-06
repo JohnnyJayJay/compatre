@@ -8,12 +8,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+
+import static com.github.johnnyjayjay.compatre.Compatre.LOGGER;
 
 /**
  * A class that allows you to apply Compatre's transformations to your nms dependent classes
@@ -23,9 +28,8 @@ import java.util.zip.ZipEntry;
  * unsafe hacks and workarounds to make it work. Unless Spigot introduces an API for custom
  * class loading, this class will thus remain unstable.
  * <p>
- * While this class implements {@code ClassLoader}, it is not meant to be used like one.
- * In fact, this inheritance only exists to provide access to
- * {@link ClassLoader#defineClass(String, byte[], int, int) class definition} for itself.
+ * This class is not a "real" class loader - it only acts as a way to inject custom logic into
+ * Bukkit's {@code PluginClassLoader}.
  *
  * @implNote To understand how this class operates, you need to understand how Bukkit's
  * class loading system works. Bukkit uses a separate instance of
@@ -46,22 +50,33 @@ import java.util.zip.ZipEntry;
  * @author Johnny_JayJay (https://www.github.com/JohnnyJayJay)
  */
 @Beta
-public final class NmsClassLoader extends ClassLoader {
+public final class NmsClassLoader {
 
   private static final boolean classProcessingAvailable;
+  private static final MethodHandle defineClass;
 
   static {
     boolean exists;
+    LOGGER.fine("Checking if class processing for legacy support is available...");
     try {
       Bukkit.getServer().getUnsafe().getClass().getDeclaredMethod("processClass", PluginDescriptionFile.class, String.class, byte[].class);
       exists = true;
+      LOGGER.fine("Class processing is available.");
     } catch (NoSuchMethodException e) {
       exists = false;
+      LOGGER.fine("Class processing is not available.");
     }
     classProcessingAvailable = exists;
+    try {
+      Method defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+      defineClassMethod.setAccessible(true);
+      defineClass = MethodHandles.lookup().unreflect(defineClassMethod);
+    } catch (NoSuchMethodException e) {
+      throw new AssertionError("defineClass method could not be found", e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException("Could not access defineClass method.", e);
+    }
   }
-
-  private static final NmsClassLoader LOADER = new NmsClassLoader();
 
   private NmsClassLoader() {}
 
@@ -87,7 +102,7 @@ public final class NmsClassLoader extends ClassLoader {
    *         <ol>
    *           <li>Apply Spigot's legacy transformations if applicable</li>
    *           <li>Apply compatre's transformations</li>
-   *           <li>Define the {@code java.lang.Class} object</li>
+   *           <li>Define the {@code java.lang.Class} object using the plugin class loader</li>
    *           <li>Put it in the plugin class loader's cache</li>
    *         </ol>
    *       </li>
@@ -97,18 +112,21 @@ public final class NmsClassLoader extends ClassLoader {
    * </ol>
    */
   public static void loadNmsDependents(Class<? extends JavaPlugin> plugin) {
+    LOGGER.info("Loading NMS depent classes of plugin " + plugin);
     ClassLoader pluginClassLoader = plugin.getClassLoader();
+    LOGGER.fine("Plugin " + plugin + " uses class loader " + pluginClassLoader);
     if (!"org.bukkit.plugin.java.PluginClassLoader".equals(pluginClassLoader.getClass().getName())) {
       throw new AssertionError("Plugin class was not loaded using a PluginClassLoader");
     }
     try {
       Map<String, Class<?>> classes = get(pluginClassLoader, "classes");
       PluginDescriptionFile description = get(pluginClassLoader, "description");
+      LOGGER.fine("Processing plugin jar file");
       File jarFile = get(pluginClassLoader, "file");
       JarFile pluginJar = new JarFile(jarFile);
       pluginJar.stream()
           .filter((entry) -> entry.getName().endsWith(".class"))
-          .map((entry) -> loadOrIgnoreClass(description, pluginJar, entry))
+          .map((entry) -> loadOrIgnoreClass(pluginClassLoader, description, pluginJar, entry))
           .filter(Objects::nonNull)
           .forEach((loaded) -> classes.put(loaded.getName(), loaded));
     } catch (NoSuchFieldException e) {
@@ -127,19 +145,23 @@ public final class NmsClassLoader extends ClassLoader {
     return (T) field.get(instance);
   }
 
-  private static Class<?> loadOrIgnoreClass(PluginDescriptionFile description, JarFile pluginJar, ZipEntry entry) {
+  private static Class<?> loadOrIgnoreClass(ClassLoader pluginClassLoader, PluginDescriptionFile description, JarFile pluginJar, ZipEntry entry) {
     try {
       String className = entry.getName().substring(0, entry.getName().length() - ".class".length()).replace('/', '.');
       byte[] classfileBuffer = ByteStreams.toByteArray(pluginJar.getInputStream(entry));
       if (NmsDependentTransformer.isNmsDependent(classfileBuffer)) {
+        LOGGER.fine("Found NMS dependent class " + className);
         if (classProcessingAvailable) {
+          LOGGER.fine("Applying Spigot transformations to " + className);
           classfileBuffer = Bukkit.getServer().getUnsafe().processClass(description, entry.getName(), classfileBuffer);
         }
         classfileBuffer = NmsDependentTransformer.transform(classfileBuffer);
-        return LOADER.defineClass(className, classfileBuffer, 0, classfileBuffer.length);
+        return (Class<?>) defineClass.invoke(pluginClassLoader, className, classfileBuffer, 0, classfileBuffer.length);
       }
     } catch (IOException e) {
       throw new RuntimeException("An IO exception occurred while reading a class file.", e);
+    } catch (Throwable throwable) {
+      throw new RuntimeException("Something went wrong while defining a class", throwable);
     }
     return null;
   }

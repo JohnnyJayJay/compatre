@@ -6,6 +6,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.ClassRemapper;
 
+import static com.github.johnnyjayjay.compatre.Compatre.LOGGER;
+
 /**
  * The class used to check if a class is annotated with {@link NmsDependent}
  * and to apply compatre's transformations to it.
@@ -40,9 +42,11 @@ public final class NmsDependentTransformer {
    */
   public static byte[] transform(byte[] classfileBuffer) {
     ClassReader reader = new ClassReader(classfileBuffer);
+    LOGGER.fine("Beginning transformation of class " + reader.getClassName());
     ClassWriter writer = new ClassWriter(0);
     ClassVisitor classRemapper = new ClassRemapper(writer, new NmsVersionRemapper(getNmsVersion()));
     reader.accept(classRemapper, 0);
+    LOGGER.fine("Transformation complete.");
     return writer.toByteArray();
   }
 
@@ -52,6 +56,7 @@ public final class NmsDependentTransformer {
 
     String craftBukkitPackage = Bukkit.getServer().getClass().getPackage().getName();
     nmsVersion = craftBukkitPackage.substring(craftBukkitPackage.lastIndexOf('.') + 1);
+    LOGGER.fine("Found NMS version " + nmsVersion);
     return nmsVersion;
   }
 }
