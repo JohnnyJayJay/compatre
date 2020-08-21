@@ -24,7 +24,7 @@ redundant by replacing the required nms/craftbukkit types at runtime.
     <dependency>
         <groupId>com.github.johnnyjayjay</groupId>
         <artifactId>compatre</artifactId>
-        <version>0.2.1-alpha</version>
+        <version>v0.2.2-alpha</version>
     </dependency>
 </dependencies>
 ```
@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.johnnyjayjay:compatre:0.2.1-alpha")
+    implementation("com.github.johnnyjayjay:compatre:v0.2.2-alpha")
 }
 ```
 
