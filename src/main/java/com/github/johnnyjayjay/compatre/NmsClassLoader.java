@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
@@ -146,9 +147,9 @@ public final class NmsClassLoader {
   }
 
   private static Class<?> loadOrIgnoreClass(ClassLoader pluginClassLoader, PluginDescriptionFile description, JarFile pluginJar, ZipEntry entry) {
-    try {
+    try (InputStream classFileStream = pluginJar.getInputStream(entry)) {
       String className = entry.getName().substring(0, entry.getName().length() - ".class".length()).replace('/', '.');
-      byte[] classfileBuffer = ByteStreams.toByteArray(pluginJar.getInputStream(entry));
+      byte[] classfileBuffer = ByteStreams.toByteArray(classFileStream);
       if (NmsDependentTransformer.isNmsDependent(classfileBuffer)) {
         LOGGER.fine("Found NMS dependent class " + className);
         if (classProcessingAvailable) {
